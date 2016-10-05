@@ -25,6 +25,7 @@
 #endregion
 
 using System;
+using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using DevDefined.OAuth.Framework;
@@ -72,8 +73,8 @@ A1UdEwQFMAMBAf8wDQYJKoZIhvcNAQEFBQADQQCXFtEZswNcPcOTT78oeTuslgmu
 			string uriWithoutAmpersand =
 				"http://demo.devdefined.com/OpenSocial/HelloWorld.aspx?oauth_nonce=c39f4e3e6c309988763eb8af85fcb74b&oauth_timestamp=1221992254&oauth_consumer_key=friendster.com&synd=friendster&container=default&opensocial_owner_id=82474146&opensocial_viewer_id=82474146&opensocial_app_id=52ae97f7aa8a7e7565dd40a4e00eb0f5&oauth_token=&xoauth_signature_publickey=http%3A%2F%2Fwww.fmodules.com%2Fpublic080813.crt&oauth_signature_method=RSA-SHA1&oauth_signature=PLOkRKwLLeJRZz18PsAVQgL5y9Rdf0AW5eicdT0xwauRe3bE2NTDFHoMsUtO6UMHEY0v9GRcKbvkgEWEGGtiGA%3D%3D";
 
-			Assert.Equal(expectedSignature, new OAuthContextBuilder().FromUrl("GET", urlWithAmpersand).GenerateSignatureBase());
-			Assert.Equal(expectedSignature, new OAuthContextBuilder().FromUrl("GET", uriWithoutAmpersand).GenerateSignatureBase());
+			Assert.Equal(expectedSignature, new OAuthContextBuilder().FromUrl("GET", urlWithAmpersand).GenerateSignatureBase().First());
+			Assert.Equal(expectedSignature, new OAuthContextBuilder().FromUrl("GET", uriWithoutAmpersand).GenerateSignatureBase().First());
 		}
 
 		[Fact]
@@ -103,8 +104,8 @@ A1UdEwQFMAMBAf8wDQYJKoZIhvcNAQEFBQADQQCXFtEZswNcPcOTT78oeTuslgmu
 				new Uri(
 					"http://demo.devdefined.com/OpenSocial/HelloWorld.aspx?oauth_nonce=c39f4e3e6c309988763eb8af85fcb74b&oauth_timestamp=1221992254&oauth_consumer_key=friendster.com&synd=friendster&container=default&opensocial_owner_id=82474146&opensocial_viewer_id=82474146&opensocial_app_id=52ae97f7aa8a7e7565dd40a4e00eb0f5&oauth_token=&xoauth_signature_publickey=http%3A%2F%2Fwww.fmodules.com%2Fpublic080813.crt&oauth_signature_method=RSA-SHA1&oauth_signature=PLOkRKwLLeJRZz18PsAVQgL5y9Rdf0AW5eicdT0xwauRe3bE2NTDFHoMsUtO6UMHEY0v9GRcKbvkgEWEGGtiGA%3D%3D");
 
-			Assert.Equal(expectedSignature, new OAuthContextBuilder().FromUri("GET", uriWithAmpersand).GenerateSignatureBase());
-			Assert.Equal(expectedSignature, new OAuthContextBuilder().FromUri("GET", uriWithoutAmpersand).GenerateSignatureBase());
+			Assert.Equal(expectedSignature, new OAuthContextBuilder().FromUri("GET", uriWithAmpersand).GenerateSignatureBase().First());
+			Assert.Equal(expectedSignature, new OAuthContextBuilder().FromUri("GET", uriWithoutAmpersand).GenerateSignatureBase().First());
 		}
 
 		[Fact]

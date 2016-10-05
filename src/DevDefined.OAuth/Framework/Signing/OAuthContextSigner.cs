@@ -48,14 +48,22 @@ namespace DevDefined.OAuth.Framework.Signing
 
 		public void SignContext(IOAuthContext authContext, SigningContext signingContext)
 		{
-			signingContext.SignatureBase = authContext.GenerateSignatureBase();
+			signingContext.SignatureBase = authContext.GenerateSignatureBase().First();
 			FindImplementationForAuthContext(authContext).SignContext(authContext, signingContext);
 		}
 
 		public bool ValidateSignature(IOAuthContext authContext, SigningContext signingContext)
 		{
-			signingContext.SignatureBase = authContext.GenerateSignatureBase();
-			return FindImplementationForAuthContext(authContext).ValidateSignature(authContext, signingContext);
+		    foreach (var signatureBase in authContext.GenerateSignatureBase())
+		    {
+                signingContext.SignatureBase = signatureBase;
+		        if (FindImplementationForAuthContext(authContext).ValidateSignature(authContext, signingContext))
+		        {
+		            return true;
+		        }
+            }
+
+		    return false;
 		}
 
 		IContextSignatureImplementation FindImplementationForAuthContext(IOAuthContext authContext)

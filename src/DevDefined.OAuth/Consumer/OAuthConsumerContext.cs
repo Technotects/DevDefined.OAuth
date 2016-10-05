@@ -25,6 +25,7 @@
 #endregion
 
 using System;
+using System.Linq;
 using System.Security.Cryptography;
 using DevDefined.OAuth.Framework;
 using DevDefined.OAuth.Framework.Signing;
@@ -77,7 +78,7 @@ namespace DevDefined.OAuth.Consumer
 
 			context.Nonce = NonceGenerator.GenerateNonce(context);
 
-			string signatureBase = context.GenerateSignatureBase();
+			string signatureBase = context.GenerateSignatureBase().First();
 
 			_signer.SignContext(context,
 			                    new SigningContext

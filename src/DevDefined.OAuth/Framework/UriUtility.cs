@@ -226,17 +226,22 @@ namespace DevDefined.OAuth.Framework
 		/// <param name="url"></param>
 		/// <param name="parameters"></param>
 		/// <returns></returns>
-		public static string FormatParameters(string httpMethod, Uri url, List<QueryParameter> parameters)
+		public static IEnumerable<string> FormatParameters(string httpMethod, Uri url, List<QueryParameter> parameters)
 		{
-			string normalizedRequestParameters = NormalizeRequestParameters(parameters);
 
-			var signatureBase = new StringBuilder();
-			signatureBase.AppendFormat("{0}&", httpMethod.ToUpper());
+		    foreach (var normalizedUri in NormalizeUri(url))
+		    {
+                string normalizedRequestParameters = NormalizeRequestParameters(parameters);
 
-			signatureBase.AppendFormat("{0}&", UrlEncode(NormalizeUri(url)));
-			signatureBase.AppendFormat("{0}", UrlEncode(normalizedRequestParameters));
+                var signatureBase = new StringBuilder();
+                signatureBase.AppendFormat("{0}&", httpMethod.ToUpper());
 
-			return signatureBase.ToString();
+                signatureBase.AppendFormat("{0}&", UrlEncode(normalizedUri));
+                signatureBase.AppendFormat("{0}", UrlEncode(normalizedRequestParameters));
+
+                yield return signatureBase.ToString();
+            }
+			
 		}
 
 		/// <summary>
@@ -270,7 +275,7 @@ namespace DevDefined.OAuth.Framework
 		/// </summary>
 		/// <param name="uri"></param>
 		/// <returns></returns>
-		public static string NormalizeUri(Uri uri)
+		public static IEnumerable<string> NormalizeUri(Uri uri)
 		{
 			string normalizedUrl = string.Format("{0}://{1}", uri.Scheme, uri.Host);
 
@@ -280,7 +285,12 @@ namespace DevDefined.OAuth.Framework
 				normalizedUrl += ":" + uri.Port;
 			}
 
-			return normalizedUrl + ((uri.AbsolutePath == "/") ? "" : uri.AbsolutePath);
+		    if (uri.AbsolutePath == "/") //Handle generating urls for both //:blah.com and //:blah.com/
+		    {
+		        yield return normalizedUrl + "";
+		    }
+
+			yield return normalizedUrl + uri.AbsolutePath;
 		}
 
 		public static IEnumerable<QueryParameter> ToQueryParameters(this NameValueCollection source)
